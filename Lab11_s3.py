@@ -1,73 +1,38 @@
-# Дан текстовый файл с некоторым текстом на русском или
-# английском языках произвольной длины (организовать чтение).
-# Выбрав некоторую хеш-функцию, создать хеш-таблицу с:
-# Лаба №13 “с наложением”
+# сложность средняя 0(n*log(n)) худшая 0(n^2)
 
-def HashFunction(s):
-    result = 0
-    for i in range(len(s)):
-        result += ord(s[i])
-    result = result % 32
-    return result
+def partition(nums, low, high):
+    # Выбираем средний элемент в качестве опорного
+    # Также возможен выбор первого, последнего или произвольного элементов в качестве опорного
+    pivot = nums[(low + high) // 2]
+    i = low - 1
+    j = high + 1
+    while True:
+        i += 1
+        while nums[i] < pivot:
+            i += 1
 
-def insert(mas, line):
-    key = HashFunction(line)
-    if mas[key] != []:
-        first = line
-        second = mas[key]
-        flag = True
-        i = 0
-        while (first[i] == second[i]):
-            i = i + 1
-        else:
-            flag = False#выход из цикла while с помощью else
-        if flag:
-            return "This row is already in the table"
-        else:
-            k = 0
-            while mas[key+k] != []:
-                k = k + 1
-            else:
-                mas[key+k] = line
-    else:
-        mas[key] = line
+        j -= 1
+        while nums[j] > pivot:
+            j -= 1
 
-def delete(mas, line):
-    key = HashFunction(line)
-    k = 0
-    while mas[key+k] != line:
-        k = k + 1
-    else:
-        del mas[key]
+        if i >= j:
+            return j
 
-def find(mas, line):
-    key = HashFunction(line)
-    if mas[key] != []:
-        k = key
-        while k < len(mas):
-            if mas[k] == line:
-                return mas[k]
-            else:
-                k = k + 1
-    else:
-        return "None"
+        # Если элемент с индексом i (слева от опорного) больше, чем
+        # элемент с индексом j (справа от опорного), меняем их местами
+        nums[i], nums[j] = nums[j], nums[i]
 
-def main():
-    mas = [[] for i in range(32)]
-    #file = open("File_lab13-14.txt", 'r', encoding="utf-8")
-    file = open("File_lab13-14.txt", 'r')
-    for line in file:
-        line = ' '.join(line.split())
-        insert(mas, line)
-    for i in range(len(mas)):
-        print(i, mas[i])
-    a = find(mas, "We all like different genres, but we never argue with each other.")
-    print(a)
-    b = find(mas, "We begin to prepare in advance")
-    delete(mas, "We all like different genres, but we never argue with each other.")
-    a = find(mas, "We all like different genres, but we never argue with each other.")
-    print(a)
-    print(b)
+def quick_sort(nums):
+    # Создадим вспомогательную функцию, которая вызывается рекурсивно
+    def _quick_sort(items, low, high):
+        if low < high:
+            # This is the index after the pivot, where our lists are split
+            split_index = partition(items, low, high)# возвращаем индекс опорного элемента
+            _quick_sort(items, low, split_index)
+            _quick_sort(items, split_index + 1, high)
 
-if __name__ == "__main__":
-    main()
+    _quick_sort(nums, 0, len(nums) - 1)
+
+random_list_of_nums = [0, 5, -2, 7, 3]
+quick_sort(random_list_of_nums)
+print(random_list_of_nums)
